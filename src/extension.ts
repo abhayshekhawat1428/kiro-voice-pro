@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import * as cp from 'child_process';
 import * as path from 'path';
-import { processTextWithAI } from './llmManager';
 import { SetupManager } from './setupManager';
 
 let statusBarItem: vscode.StatusBarItem;
@@ -230,29 +229,9 @@ async function startListening(context: vscode.ExtensionContext) {
         const rawText = capturedOutput.trim();
 
         if (code === 0 && rawText) {
-            const outputFormat = config.get<string>('outputFormat') || 'both';
-            let finalText = "";
-
-            if (outputFormat === 'raw_only') {
-                // Skip AI processing entirely for raw mode
-                finalText = rawText;
-            } else {
-                // Process with AI for 'optimized_only' or 'both'
-                statusBarItem.text = '$(sparkle) Optimizing...';
-                const optimizedText = await processTextWithAI(rawText);
-
-                if (outputFormat === 'both') {
-                    finalText = `[Raw]: ${rawText}\n[AI]: ${optimizedText}`;
-                } else {
-                    finalText = optimizedText;
-                }
-            }
-
-            // Reset UI and Insert
             statusBarItem.text = '$(mic) Voice';
             statusBarItem.backgroundColor = undefined;
-            insertText(finalText);
-            
+            insertText(rawText);
         } else {
             statusBarItem.text = '$(mic) Voice';
             statusBarItem.backgroundColor = undefined;

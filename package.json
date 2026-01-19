@@ -40,20 +40,6 @@
           "default": "python",
           "description": "Absolute path to the Python executable with sounddevice installed."
         },
-        "kiroVoice.aiProvider": {
-          "type": "string",
-          "enum": [
-            "ollama",
-            "openai"
-          ],
-          "default": "ollama",
-          "description": "AI provider for text cleanup."
-        },
-        "kiroVoice.modelName": {
-          "type": "string",
-          "default": "mistral",
-          "description": "Model to use (e.g., mistral, llama3, gpt-4o)."
-        },
         "kiroVoice.silenceDuration": {
           "type": "number",
           "default": 3.0,
@@ -64,26 +50,10 @@
           "default": 0.01,
           "description": "Microphone sensitivity (Lower = more sensitive)."
         },
-        "kiroVoice.outputFormat": {
-          "type": "string",
-          "enum": ["optimized_only", "raw_only", "both"],
-          "default": "both",
-          "description": "What text to paste: only the AI cleaned version, or both."
-        },
         "kiroVoice.useLocalPython": {
           "type": "boolean",
           "default": false,
           "description": "Development mode: Use local Python instead of bundled binary."
-        },
-        "kiroVoice.apiEndpoint": {
-          "type": "string",
-          "default": "http://localhost:11434/v1/chat/completions",
-          "description": "API endpoint for LLM (Ollama default shown)."
-        },
-        "kiroVoice.apiKey": {
-          "type": "string",
-          "default": "",
-          "description": "API key for OpenAI (leave empty for Ollama)."
         }
       }
     }
