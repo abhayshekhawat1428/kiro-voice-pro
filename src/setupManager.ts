@@ -163,7 +163,7 @@ export class SetupManager {
 
     // --- VOICE ENGINE DOWNLOADER ---
     // UPDATE THESE before publishing!
-    private static GITHUB_USER = "YOUR_GITHUB_USERNAME";  // TODO: Change to your GitHub username
+    private static GITHUB_USER = "abhayshekhawat1428";  // GitHub username
     private static GITHUB_REPO = "kiro-voice-pro";
     private static VERSION = "v1.0.0";  // Must match your GitHub release tag 
 
