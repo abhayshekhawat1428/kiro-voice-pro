@@ -202,7 +202,23 @@ async function startListening(context: vscode.ExtensionContext) {
     });
 
     voiceProcess.on('error', (err) => {
-        vscode.window.showErrorMessage(`Failed to start voice engine: ${err.message}`);
+        // Check for macOS Gatekeeper block
+        if (process.platform === 'darwin' && (err.message.includes('EACCES') || err.message.includes('permission'))) {
+            vscode.window.showErrorMessage(
+                'macOS blocked the voice engine. Go to System Settings → Privacy & Security and click "Open Anyway" for kiro_voice_engine_macos.',
+                'Open Settings',
+                'Use Python Instead'
+            ).then(choice => {
+                if (choice === 'Open Settings') {
+                    cp.exec('open x-apple.systempreferences:com.apple.preference.security?General');
+                } else if (choice === 'Use Python Instead') {
+                    vscode.workspace.getConfiguration('kiroVoice').update('useLocalPython', true, true);
+                    vscode.window.showInformationMessage('Switched to Python mode. Click Voice again to start.');
+                }
+            });
+        } else {
+            vscode.window.showErrorMessage(`Failed to start voice engine: ${err.message}`);
+        }
         statusBarItem.text = '$(mic) Voice';
         statusBarItem.backgroundColor = undefined;
         voiceProcess = null;

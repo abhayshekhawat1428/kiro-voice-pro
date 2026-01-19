@@ -186,6 +186,10 @@ export class SetupManager {
                 if (process.platform !== 'win32') {
                     try {
                         fs.chmodSync(finalPath, 0o755);
+                        // macOS: Remove quarantine attribute to bypass Gatekeeper
+                        if (process.platform === 'darwin') {
+                            cp.exec(`xattr -d com.apple.quarantine "${finalPath}"`, () => {});
+                        }
                     } catch {
                         // Ignore chmod errors
                     }
@@ -240,6 +244,10 @@ export class SetupManager {
                             if (process.platform !== 'win32') {
                                 try {
                                     fs.chmodSync(finalPath, 0o755);
+                                    // macOS: Remove quarantine attribute to bypass Gatekeeper
+                                    if (process.platform === 'darwin') {
+                                        cp.exec(`xattr -d com.apple.quarantine "${finalPath}"`, () => {});
+                                    }
                                 } catch (e) {
                                     console.error('Failed to set execute permission:', e);
                                 }
