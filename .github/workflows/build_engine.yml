@@ -1,0 +1,158 @@
+# CI/CD to build Voice Engine for all platforms with ALL dependencies bundled
+name: Build Voice Engine
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install system dependencies
+        run: |
+          brew install portaudio ffmpeg
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+          pip install openai-whisper sounddevice scipy numpy
+      
+      - name: Build Voice Engine
+        run: |
+          pyinstaller --onefile \
+            --name kiro_voice_engine_macos \
+            --hidden-import=sounddevice \
+            --hidden-import=scipy \
+            --hidden-import=numpy \
+            --hidden-import=whisper \
+            --collect-all whisper \
+            --collect-all sounddevice \
+            python/voice_engine.py
+      
+      - name: Make executable
+        run: chmod +x dist/kiro_voice_engine_macos
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kiro_voice_engine_macos
+          path: dist/kiro_voice_engine_macos
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y portaudio19-dev ffmpeg libsndfile1
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+          pip install openai-whisper sounddevice scipy numpy
+      
+      - name: Build Voice Engine
+        run: |
+          pyinstaller --onefile \
+            --name kiro_voice_engine_linux \
+            --hidden-import=sounddevice \
+            --hidden-import=scipy \
+            --hidden-import=numpy \
+            --hidden-import=whisper \
+            --collect-all whisper \
+            --collect-all sounddevice \
+            python/voice_engine.py
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kiro_voice_engine_linux
+          path: dist/kiro_voice_engine_linux
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install FFmpeg
+        run: choco install ffmpeg -y
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+          pip install openai-whisper sounddevice scipy numpy
+      
+      - name: Build Voice Engine
+        run: |
+          pyinstaller --onefile `
+            --name kiro_voice_engine_win `
+            --hidden-import=sounddevice `
+            --hidden-import=scipy `
+            --hidden-import=numpy `
+            --hidden-import=whisper `
+            --collect-all whisper `
+            --collect-all sounddevice `
+            python/voice_engine.py
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kiro_voice_engine_win.exe
+          path: dist/kiro_voice_engine_win.exe
+
+  release:
+    needs: [build-macos, build-linux, build-windows]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+      - name: Download macOS artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: kiro_voice_engine_macos
+          path: binaries/
+      
+      - name: Download Linux artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: kiro_voice_engine_linux
+          path: binaries/
+      
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: kiro_voice_engine_win.exe
+          path: binaries/
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: binaries/*
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

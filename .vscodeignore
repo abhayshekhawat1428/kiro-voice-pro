@@ -1,0 +1,13 @@
+# Files to exclude from build
+.vscode/**
+.vscode-test/**
+src/**
+.github/**
+.gitignore
+*.map
+*.ts
+tsconfig.json
+voice_engine.spec
+node_modules/**
+!node_modules/@types/**
+python/__pycache__/**

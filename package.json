@@ -1,0 +1,95 @@
+{
+  "name": "kiro-voice-pro",
+  "displayName": "Kiro Voice Pro",
+  "description": "Voice-to-Code with Auto-Setup and Local AI Optimization",
+  "version": "1.0.0",
+  "publisher": "yourname",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:kiro.toggleVoice"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "kiro.toggleVoice",
+        "title": "Start Voice Dictation"
+      }
+    ],
+    "configuration": {
+      "title": "Kiro Voice",
+      "properties": {
+        "kiroVoice.pythonPath": {
+          "type": "string",
+          "default": "python",
+          "description": "Absolute path to the Python executable with sounddevice installed."
+        },
+        "kiroVoice.aiProvider": {
+          "type": "string",
+          "enum": [
+            "ollama",
+            "openai"
+          ],
+          "default": "ollama",
+          "description": "AI provider for text cleanup."
+        },
+        "kiroVoice.modelName": {
+          "type": "string",
+          "default": "mistral",
+          "description": "Model to use (e.g., mistral, llama3, gpt-4o)."
+        },
+        "kiroVoice.silenceDuration": {
+          "type": "number",
+          "default": 3.0,
+          "description": "How many seconds of silence to wait before stopping automatically."
+        },
+        "kiroVoice.silenceThreshold": {
+          "type": "number",
+          "default": 0.01,
+          "description": "Microphone sensitivity (Lower = more sensitive)."
+        },
+        "kiroVoice.outputFormat": {
+          "type": "string",
+          "enum": ["optimized_only", "raw_only", "both"],
+          "default": "both",
+          "description": "What text to paste: only the AI cleaned version, or both."
+        },
+        "kiroVoice.useLocalPython": {
+          "type": "boolean",
+          "default": false,
+          "description": "Development mode: Use local Python instead of bundled binary."
+        },
+        "kiroVoice.apiEndpoint": {
+          "type": "string",
+          "default": "http://localhost:11434/v1/chat/completions",
+          "description": "API endpoint for LLM (Ollama default shown)."
+        },
+        "kiroVoice.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "API key for OpenAI (leave empty for Ollama)."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "20.x",
+    "@types/vscode": "^1.80.0",
+    "@vscode/vsce": "^2.15.0",
+    "ts-loader": "^9.4.0",
+    "typescript": "^5.1.0",
+    "webpack": "^5.85.0",
+    "webpack-cli": "^5.1.0"
+  }
+}
