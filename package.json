@@ -3,16 +3,26 @@
   "displayName": "Kiro Voice Pro",
   "description": "Voice-to-Code with Auto-Setup and Local AI Optimization",
   "version": "1.0.0",
-  "publisher": "yourname",
+  "publisher": "abhayshekhawat1428",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abhayshekhawat1428/kiro-voice-pro"
+  },
   "engines": {
     "vscode": "^1.80.0"
   },
   "categories": [
     "Other"
   ],
+  "keywords": [
+    "voice",
+    "speech",
+    "dictation",
+    "whisper",
+    "ai"
+  ],
   "activationEvents": [
-    "onStartupFinished",
-    "onCommand:kiro.toggleVoice"
+    "onStartupFinished"
   ],
   "main": "./out/extension.js",
   "contributes": {
