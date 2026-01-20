@@ -1,36 +1,55 @@
-# Kiro Voice Pro 🎤
+<p align="center">
+  <img src="https://img.shields.io/badge/VS%20Code-Extension-blue?logo=visualstudiocode" alt="VS Code Extension">
+  <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
+  <img src="https://img.shields.io/badge/Platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey" alt="Platform">
+  <img src="https://img.shields.io/badge/AI-Local%20First-purple" alt="Local AI">
+</p>
 
-Voice-to-text for VS Code, Cursor, and Kiro with local AI optimization.
+<h1 align="center">Kiro Voice Pro</h1>
 
-Speak naturally, and your words are transcribed and cleaned up by a local AI before being pasted wherever your cursor is.
+<p align="center">
+  <strong>Voice-to-text for VS Code, Cursor, and Kiro with local AI optimization.</strong>
+  <br>
+  Speak naturally. Get clean, polished text. Pasted wherever your cursor is.
+</p>
 
-## ✨ Features
+---
 
-- **Voice Recording** - Click the mic button and speak
-- **Auto-stop** - Automatically stops after configurable silence duration
-- **Local AI Cleanup** - Removes filler words ("um", "like"), fixes grammar using Ollama
-- **Smart Paste** - Pastes wherever your cursor is (editor, chat, terminal)
-- **Privacy First** - All processing happens locally on your machine
+## Why Kiro Voice Pro?
 
-## 📦 Installation
+Most voice-to-text tools give you raw transcription full of "um", "like", and broken grammar. Kiro Voice Pro runs your speech through a local LLM to clean it up before pasting — all without sending data to the cloud.
 
-### From Marketplace
-1. Search "Kiro Voice Pro" in Extensions
-2. Click Install
-3. The voice engine downloads automatically on first use
+Everything runs on your machine.
 
-### From VSIX
-1. Download the `.vsix` file from [Releases](https://github.com/abhayshekhawat1428/kiro-voice-pro/releases)
-2. In VS Code/Kiro: Extensions → ⋯ → Install from VSIX
+## Features
 
-## 🚀 Quick Start
+| Feature | Description |
+|---------|-------------|
+| One-Click Recording | Click the mic button in the status bar and start talking |
+| Smart Auto-Stop | Automatically stops after configurable silence duration |
+| AI Text Cleanup | Removes filler words, fixes grammar using local Ollama |
+| Universal Paste | Works in editor, chat panels, terminal — anywhere |
+| 100% Local | No cloud APIs required (OpenAI optional) |
 
-1. Click **🎤 Voice** in the status bar
-2. Speak your text
-3. Wait for silence (3 seconds) or click again to stop
-4. Text is cleaned by AI and pasted automatically
+## Quick Start
 
-## ⚙️ Settings
+1. Install from the VS Code Marketplace (search "Kiro Voice Pro")
+2. Click **Voice** in the status bar
+3. Speak your text
+4. Wait for silence (3s) or click again to stop
+5. Text is cleaned and pasted automatically
+
+## Requirements
+
+| Requirement | Purpose | Auto-Setup |
+|-------------|---------|------------|
+| [Ollama](https://ollama.com) | Local AI text cleanup | Prompted on first use |
+| Microphone | Voice input | — |
+| Accessibility Permission (macOS) | Auto-paste functionality | Guided setup |
+
+## Configuration
+
+Access via `Settings > Extensions > Kiro Voice`
 
 | Setting | Default | Description |
 |---------|---------|-------------|
@@ -38,66 +57,88 @@ Speak naturally, and your words are transcribed and cleaned up by a local AI bef
 | `kiroVoice.modelName` | `mistral` | LLM model for text cleanup |
 | `kiroVoice.silenceDuration` | `3.0` | Seconds of silence before auto-stop |
 | `kiroVoice.silenceThreshold` | `0.01` | Mic sensitivity (lower = more sensitive) |
-| `kiroVoice.outputFormat` | `both` | Output format: `optimized_only`, `raw_only`, or `both` |
-| `kiroVoice.useLocalPython` | `false` | Development mode: use local Python instead of binary |
+| `kiroVoice.outputFormat` | `both` | `optimized_only`, `raw_only`, or `both` |
 
-## 🔧 Requirements
+<details>
+<summary><strong>Advanced Settings</strong></summary>
 
-- **Ollama** - For AI text cleanup (auto-installed on first use)
-- **Microphone** - For voice input
-- **macOS**: Accessibility permissions for auto-paste
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `kiroVoice.useLocalPython` | `false` | Dev mode: use Python instead of binary |
+| `kiroVoice.pythonPath` | `python` | Path to Python executable |
+| `kiroVoice.apiEndpoint` | `http://localhost:11434/v1/chat/completions` | LLM API endpoint |
+| `kiroVoice.apiKey` | `` | API key (for OpenAI only) |
 
-## 🛠️ Development
+</details>
+
+## How It Works
+
+```
+Click Mic  →  Record Audio  →  Whisper Transcribe  →  Ollama Cleanup  →  Paste
+```
+
+**Example transformation:**
+- Input: *"Um, can you like, write a python script to scan ports or whatever"*
+- Output: *"Write a Python script to scan network ports."*
+
+## Development
 
 ### Prerequisites
+
 - Node.js 20+
-- Python 3.11+ with: `pip install openai-whisper sounddevice scipy numpy`
-- Ollama with a model: `ollama pull mistral`
+- Python 3.11+ with dependencies:
+  ```bash
+  pip install openai-whisper sounddevice scipy numpy
+  ```
+- Ollama with a model:
+  ```bash
+  ollama pull mistral
+  ```
 
 ### Setup
+
 ```bash
 git clone https://github.com/abhayshekhawat1428/kiro-voice-pro.git
 cd kiro-voice-pro
 npm install
-```
-
-### Build Extension
-```bash
 npm run compile
 ```
 
-### Package VSIX
-```bash
-npx @vscode/vsce package --allow-missing-repository
-```
+### Development Mode
+
+Set `kiroVoice.useLocalPython: true` to use the Python script directly instead of the bundled binary.
 
 ### Build Voice Engine Binary
+
 ```bash
 pip install pyinstaller
 pyinstaller --onefile --name kiro_voice_engine python/voice_engine.py
 ```
 
-### Development Mode
-Set `kiroVoice.useLocalPython: true` in settings to use local Python instead of the bundled binary.
+### Package Extension
 
-## 🏗️ Architecture
-
-```
-User clicks Voice → Python records audio → Whisper transcribes → 
-Ollama cleans text → Paste to cursor
+```bash
+npx @vscode/vsce package --allow-missing-repository
 ```
 
-| File | Purpose |
-|------|---------|
-| `extension.ts` | Main extension entry point |
-| `voice_engine.py` | Audio recording + Whisper transcription |
-| `llmManager.ts` | AI text cleanup via Ollama/OpenAI |
-| `setupManager.ts` | Auto-download binaries and dependencies |
+## Project Structure
 
-## 📄 License
+```
+kiro-voice-pro/
+├── src/
+│   ├── extension.ts      # Main entry point, UI, voice toggle
+│   ├── llmManager.ts     # AI text cleanup (Ollama/OpenAI)
+│   └── setupManager.ts   # Auto-download binaries, setup
+├── python/
+│   └── voice_engine.py   # Audio recording + Whisper transcription
+├── package.json
+└── README.md
+```
 
-MIT License - see [LICENSE](LICENSE) for details.
+## Contributing
 
-## 🤝 Contributing
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-Contributions welcome! Please open an issue or PR.
+## License
+
+MIT License — see [LICENSE](LICENSE) for details.
