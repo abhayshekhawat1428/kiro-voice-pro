@@ -162,10 +162,9 @@ export class SetupManager {
     }
 
     // --- VOICE ENGINE DOWNLOADER ---
-    // UPDATE THESE before publishing!
-    private static GITHUB_USER = "abhayshekhawat1428";  // GitHub username
+    private static GITHUB_USER = "abhayshekhawat1428";
     private static GITHUB_REPO = "kiro-voice-pro";
-    private static VERSION = "v1.0.0";  // Must match your GitHub release tag 
+    private static VERSION = "v1.0.0";
 
     static async ensureVoiceEngine(context: vscode.ExtensionContext): Promise<boolean> {
         const storagePath = context.globalStorageUri.fsPath;
